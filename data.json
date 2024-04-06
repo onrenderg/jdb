@@ -1,0 +1,12 @@
+[
+    {
+        "title": "",
+        "content": "import json\n\ndef read_ipynb_file(file_path):\n    with open(file_path, 'r', encoding='utf-8') as f:\n        return json.load(f)\n\ndef parse_content(cells):\n    parsed_content = []\n    for cell in cells:\n        tags = []  # Initialize tags for each cell\n        if 'source' in cell and isinstance(cell['source'], list) and cell['source']:\n            content = ''.join(cell['source'])\n            for line in cell['source']:\n                if line.strip().startswith(\"#0-stag=\"):\n                    tag = line.strip().split(\"#0-stag=\")[-1]\n                    tags.append(tag)\n            parsed_content.append({\n                \"title\": \"\",\n                \"content\": content,\n                \"tags\": tags\n            })\n    return parsed_content\n\ndef generate_json(parsed_content, output_file):\n    with open(output_file, 'w', encoding='utf-8') as f:\n        json.dump(parsed_content, f, indent=4)\n\ndef main(input_file, output_file):\n    ipynb_content = read_ipynb_file(input_file)\n    parsed_content = parse_content(ipynb_content['cells'])\n    generate_json(parsed_content, output_file)\n\nif __name__ == \"__main__\":\n    input_file_path = \"1.ipynb\"\n    output_file_path = \"data.json\"\n    main(input_file_path, output_file_path)",
+        "tags": []
+    },
+    {
+        "title": "",
+        "content": "import json\nimport os\n\ndef merge_json_files(folder_path, output_file):\n    merged_data = []\n\n    # Iterate over each file in the folder\n    for filename in os.listdir(folder_path):\n        if filename.endswith('.json'):\n            file_path = os.path.join(folder_path, filename)\n            with open(file_path, 'r') as f:\n                data = json.load(f)\n                merged_data.extend(data)\n\n    # Write merged data to the output file\n    with open(output_file, 'w') as f:\n        json.dump(merged_data, f, indent=4)\n\n# Specify the folder containing JSON files and the output file\nfolder_path = './'\noutput_file = 'data.json'\n\nmerge_json_files(folder_path, output_file)\n!mv data.json ./fuzz",
+        "tags": []
+    }
+]
